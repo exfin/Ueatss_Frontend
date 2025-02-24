@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import { Menu, X } from "lucide-react";
+import NavButtons from "./buttons/NavButtons";
 
 const Navlinks = () =>{
   return (
@@ -14,7 +15,7 @@ const Navlinks = () =>{
       Canasta
     </Link>
     <Link
-      href="/cuenta"
+      href="/perfil"
       className="relative text-white hover:text-gray-500 after:absolute after:left-0 after:bottom-0 after:w-full after:h-[2px] after:bg-white after:scale-x-0 after:transition-transform after:duration-300 hover:after:scale-x-100"
     >
       Cuenta
@@ -40,7 +41,7 @@ export default function Navbar() {
 
     <div className="flex w-1/4 justify-end p-4">
       <div className="hidden w-full justify-between md:flex">
-        <Navlinks></Navlinks>
+        <NavButtons></NavButtons>
       </div>
       <div className="md:hidden">
         <button className=" text-white" onClick={toggleNavbar}>
@@ -50,7 +51,7 @@ export default function Navbar() {
     </div>
     {isOpen && (
       <div className="flex flex-col items-center basis-full ">
-        <Navlinks></Navlinks>
+        <NavButtons></NavButtons>
       </div>
     )}
     
