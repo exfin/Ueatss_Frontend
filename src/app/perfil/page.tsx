@@ -5,6 +5,7 @@ export default function ProfilePage() {
       <main>
         <h1>My Profile</h1>
         <ProfileServer />
+        <a href="/api/auth/logout">Logout</a>
       </main>
     );
   }
