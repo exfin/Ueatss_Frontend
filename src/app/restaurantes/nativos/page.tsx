@@ -17,7 +17,7 @@ type Food = {
 export default function Page() {
   const [foods, setFoods] = useState<Food[]>([]); 
 
-   // Replace with actual ID
+   
 
   useEffect(() => {
     async function fetchFoods() {

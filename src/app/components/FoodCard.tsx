@@ -19,7 +19,7 @@ export default function FoodCard({ name, image, price, description }: FoodCardPr
       <img src={image} alt={name} className="w-full h-40 object-cover rounded-md mb-3" />
       <h2 className="text-lg font-bold">{name}</h2>
       <p className="text-gray-500 text-sm mb-2">{description}</p>
-      <p className="text-xl font-semibold text-green-600 mb-2">${price.toFixed(2)}</p>
+      <p className="text-xl font-semibold text-green-600 mb-2">${price}</p>
 
       
       <input
