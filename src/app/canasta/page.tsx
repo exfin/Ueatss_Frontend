@@ -56,15 +56,15 @@ export default function page() {
                             <p>{item.quantity}</p>
                             <div 
                             >
-                                <button className="w-[25px] h-[30px] bg-black text-white border-none m-2 text-base" 
+                                <button className="w-[25px] h-[30px] bg-green-500 text-white border-none m-2 text-base" 
                                 onClick={() => dispatch(incrementQuantity(item.id))}>
                                 +
                                 </button>
-                                <button className="w-[25px] h-[30px] bg-black text-white border-none m-2 text-base" 
+                                <button className="w-[25px] h-[30px] bg-white text-black border-none m-2 text-base" 
                                 onClick={() => dispatch(decrementQuantity(item.id))}>
                                 -
                                 </button>
-                                <button className="w-[25px] h-[30px] bg-black text-white border-none m-2 text-base" 
+                                <button className="w-[25px] h-[30px] bg-red-600 text-white border-none m-2 text-base" 
                                 onClick={() => dispatch(removeFromCart(item.id))}>
                                 x
                                 </button>
