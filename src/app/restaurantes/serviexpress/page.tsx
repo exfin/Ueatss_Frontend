@@ -40,13 +40,11 @@ export default function Page() {
         <div className="flex-1 flex flex-col p-6">
           <h1 className="text-2xl font-bold mb-6">Menu</h1>
           <div className="flex justify-around flex-wrap p-6 gap-4" >
-            {foods.length > 0 ? (
-              foods.map((food) => (
-                <FoodCard key={food.id} name={food.name} description={food.description} image={food.image} price={food.price} />
-              ))
-            ) : (
-              <p className="text-gray-500">No food items available</p>
-            )}
+          {foods.length > 0 ? (
+            foods.map((food) => <FoodCard key={food.id} product={food} />) 
+          ) : (
+            <p className="text-gray-500">No food items available</p>
+          )}
           </div>
         </div>
       </div>
