@@ -1,32 +1,54 @@
 import React from 'react';
 import ProfileServer from './ProfileServer';
 import Link from 'next/link';
-import Navbar from '../components/Navbar';
+import Header from '../components/Header';
 import Footer from '../components/Footer';
 
 const PerfilLayout: React.FC = () => {
   return (
-    <div>
-      <header>
-        <Navbar />
+    <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+      <header style={{ position: 'fixed', width: '100%', top: 0, zIndex: 1000, backgroundColor: '#32CD32' }}>
+        <Header/>
       </header>
-      <main>
-        <h1 style={{ textAlign: 'center' }}>Perfil de Usuario</h1>
-        <div style={{ borderBottom: '1px solid black', paddingBottom: '10px' }}>
+
+      <main style={{ 
+        flex: 1, 
+        marginTop: '80px', 
+        textAlign: 'center', 
+        display: 'flex', 
+        flexDirection: 'column', 
+        alignItems: 'center', 
+        justifyContent: 'center' 
+      }}>
+        <h3>Perfil de Usuario</h3>
+        <div style={{ 
+          border: '1px solid black', 
+          padding: '20px', 
+          width: '300px', 
+          textAlign: 'center', 
+          backgroundColor: '#444', 
+          color: 'white', 
+          borderRadius: '10px' 
+        }}>
           <ProfileServer />
-        </div>
-        <div style={{ display: 'flex', justifyContent: 'center', marginTop: '20px' }}>
-          <div style={{ border: '1px solid black', padding: '20px', width: '300px', textAlign: 'center', backgroundColor: 'gray', color: 'white' }}>
-            <img src="/default-profile.png" alt="User" style={{ width: '100px', height: '100px', borderRadius: '50%' }} />
-            <h2>Nombre del Usuario</h2>
-            <p>correo@ejemplo.com</p>
-            <Link href="/api/auth/logout" style={{ color: 'white' }}>Logout</Link>
-          </div>
+          <Link 
+            href="/api/auth/logout" 
+            style={{ 
+              display: 'block', 
+              marginTop: '10px', 
+              backgroundColor: '#333', 
+              color: 'white', 
+              padding: '10px', 
+              borderRadius: '5px', 
+              textDecoration: 'none' 
+            }}
+          >
+            Logout
+          </Link>
         </div>
       </main>
-      <footer style={{ textAlign: 'center', marginTop: '20px' }}>
-        <Footer />
-      </footer>
+
+      <Footer />
     </div>
   );
 };
