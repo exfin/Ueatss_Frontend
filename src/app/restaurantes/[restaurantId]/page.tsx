@@ -19,6 +19,8 @@ export default function RestaurantPage() {
   const params = useParams();
   const restaurantId = params?.restaurantId as string;
   const [foods, setFoods] = useState<Food[]>([]);
+  const [filteredFoods, setFilteredFoods] = useState<Food[]>([]);
+  const [categories, setCategories] = useState<string[]>([]);
   const [newFood, setNewFood] = useState({
     name: "",
     description: "",
@@ -27,12 +29,22 @@ export default function RestaurantPage() {
     category: "",
   });
 
+  // Filtros
+  const [categoryFilter, setCategoryFilter] = useState<string>("");
+  const [minPrice, setMinPrice] = useState<string>("");
+  const [maxPrice, setMaxPrice] = useState<string>("");
+
   useEffect(() => {
     async function fetchFoods() {
       try {
         const res = await fetch(`/api/restaurants/${restaurantId}`);
         const data: Food[] = await res.json();
         setFoods(data);
+        setFilteredFoods(data);
+
+        // Extraer categorías únicas
+        const uniqueCategories = [...new Set(data.map((food) => food.category))];
+        setCategories(uniqueCategories);
       } catch (error) {
         console.error("Error fetching foods:", error);
       }
@@ -40,6 +52,24 @@ export default function RestaurantPage() {
 
     if (restaurantId) fetchFoods();
   }, [restaurantId]);
+
+  useEffect(() => {
+    let filtered = foods;
+
+    if (categoryFilter) {
+      filtered = filtered.filter((food) => food.category === categoryFilter);
+    }
+
+    if (minPrice) {
+      filtered = filtered.filter((food) => food.price >= parseFloat(minPrice));
+    }
+
+    if (maxPrice) {
+      filtered = filtered.filter((food) => food.price <= parseFloat(maxPrice));
+    }
+
+    setFilteredFoods(filtered);
+  }, [categoryFilter, minPrice, maxPrice, foods]);
 
   async function handleAddFood() {
     try {
@@ -52,6 +82,12 @@ export default function RestaurantPage() {
 
       const addedFood = await res.json();
       setFoods([...foods, addedFood]);
+
+      
+      if (!categories.includes(addedFood.category)) {
+        setCategories([...categories, addedFood.category]);
+      }
+
       setNewFood({ name: "", description: "", image: "", price: "", category: "" });
     } catch (error) {
       console.error("Error adding food:", error);
@@ -63,13 +99,47 @@ export default function RestaurantPage() {
       <Header />
       <div className="min-h-screen flex flex-col p-6">
         <h1 className="text-2xl font-bold mb-6">Menú</h1>
+
+        {/* Filtros */}
+        <div className="flex flex-wrap gap-4 mb-6">
+          <select
+            value={categoryFilter}
+            onChange={(e) => setCategoryFilter(e.target.value)}
+            className="p-2 border rounded"
+          >
+            <option value="">Todas las categorías</option>
+            {categories.map((category) => (
+              <option key={category} value={category}>
+                {category}
+              </option>
+            ))}
+          </select>
+          <input
+            type="number"
+            placeholder="Precio mínimo"
+            value={minPrice}
+            onChange={(e) => setMinPrice(e.target.value)}
+            className="p-2 border rounded"
+          />
+          <input
+            type="number"
+            placeholder="Precio máximo"
+            value={maxPrice}
+            onChange={(e) => setMaxPrice(e.target.value)}
+            className="p-2 border rounded"
+          />
+        </div>
+
+        {/* Lista de comidas */}
         <div className="flex justify-around flex-wrap p-6 gap-4">
-          {foods.length > 0 ? (
-            foods.map((food) => <FoodCard key={food.id} product={food} />)
+          {filteredFoods.length > 0 ? (
+            filteredFoods.map((food) => <FoodCard key={food.id} product={food} />)
           ) : (
             <p className="text-gray-500">No food items available</p>
           )}
         </div>
+
+        
         <div className="p-6 bg-gray-100 border rounded-lg shadow-md mt-6">
           <h2 className="text-lg font-semibold mb-4">Añadir Comida</h2>
           <input
@@ -100,13 +170,18 @@ export default function RestaurantPage() {
             onChange={(e) => setNewFood({ ...newFood, price: e.target.value })}
             className="w-full p-2 mb-2 border rounded"
           />
-          <input
-            type="text"
-            placeholder="Categoría"
+          <select
             value={newFood.category}
             onChange={(e) => setNewFood({ ...newFood, category: e.target.value })}
             className="w-full p-2 mb-2 border rounded"
-          />
+          >
+            <option value="">Seleccionar categoría</option>
+            {categories.map((category) => (
+              <option key={category} value={category}>
+                {category}
+              </option>
+            ))}
+          </select>
           <button
             onClick={handleAddFood}
             className="mt-2 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition"
