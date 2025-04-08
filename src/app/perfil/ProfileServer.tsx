@@ -9,7 +9,7 @@ export default function AuthButton() {
     return (
       <>
         {session.user?.name} <br />
-        <button onClick={() => signOut()}>Sign out</button>
+        <button onClick={() => signOut()}>Cerrar Cesión</button>
       </>
     );
   }
@@ -17,7 +17,7 @@ export default function AuthButton() {
   return (
     <>
       Not signed in <br />
-      <button onClick={() => signIn()}>Sign in</button>
+      <button onClick={() => signIn()}>Iniciar Sesión</button>
     </>
   );
 }
