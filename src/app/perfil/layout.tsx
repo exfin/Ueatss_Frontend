@@ -31,20 +31,7 @@ const PerfilLayout: React.FC = () => {
           borderRadius: '10px' 
         }}>
           <ProfileServer />
-          <Link 
-            href="/api/auth/logout" 
-            style={{ 
-              display: 'block', 
-              marginTop: '10px', 
-              backgroundColor: '#333', 
-              color: 'white', 
-              padding: '10px', 
-              borderRadius: '5px', 
-              textDecoration: 'none' 
-            }}
-          >
-            Logout
-          </Link>
+          
         </div>
       </main>
 

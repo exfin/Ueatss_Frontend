@@ -1,19 +1,23 @@
-import { getSession } from '@auth0/nextjs-auth0';
+"use client";
 
-export default async function ProfileServer() {
-  const session = await getSession();
+import { signIn, signOut, useSession } from "next-auth/react";
 
-  if (!session?.user) {
-    return <p>Please log in to view your profile.</p>;
+export default function AuthButton() {
+  const { data: session } = useSession();
+
+  if (session) {
+    return (
+      <>
+        {session.user?.name} <br />
+        <button onClick={() => signOut()}>Cerrar Cesión</button>
+      </>
+    );
   }
 
-  const { user } = session;
-
   return (
-    <div>
-      <img src={user.picture ?? "/default-profile.png"} alt={user.name ?? "User"} />
-      <h2>{user.name}</h2>
-      <p>{user.email}</p>
-    </div>
+    <>
+      Not signed in <br />
+      <button onClick={() => signIn()}>Iniciar Sesión</button>
+    </>
   );
 }
