@@ -16,26 +16,27 @@ export default function CheckoutButton({ restaurantId, title, price, quantity = 
     setLoading(true);
 
     const res = await fetch("/api/checkout", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        restaurantId,
-        title,
-        price,
-        quantity,
-      }),
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            restaurantId,
+            title,
+            price,
+            quantity,
+        }),
     });
 
     const data = await res.json();
+    console.log("Checkout API Response:", data); // Log the response
 
     if (data?.url) {
-      window.location.href = data.url; // redirect to MercadoPago Checkout
+        window.location.href = data.url; // Redirect to MercadoPago Checkout
     } else {
-      alert("Error iniciando pago.");
+        alert("Error iniciando pago.");
     }
 
     setLoading(false);
-  };
+};
 
   return (
     <button
