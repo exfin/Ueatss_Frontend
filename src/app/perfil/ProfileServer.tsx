@@ -17,7 +17,10 @@ export default function AuthButton() {
   return (
     <>
       Not signed in <br />
-      <button onClick={() => signIn()}>Iniciar Sesión</button>
+      <button onClick={() => signIn("auth0", undefined, { prompt: "select_account" })}>
+        Iniciar Sesión
+      </button>
+
     </>
   );
 }

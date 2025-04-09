@@ -15,6 +15,10 @@ interface Food {
   category: string;
 }
 
+function normalizeCategory(cat: string): string {
+  return cat.trim().toLowerCase();
+}
+
 export default function RestaurantPage() {
   const params = useParams();
   const restaurantId = params?.restaurantId as string;
@@ -42,8 +46,10 @@ export default function RestaurantPage() {
         setFoods(data);
         setFilteredFoods(data);
 
-        // Extraer categorías únicas
-        const uniqueCategories = [...new Set(data.map((food) => food.category))];
+        // Categorías únicas normalizadas
+        const uniqueCategories = [
+          ...new Set(data.map((food) => normalizeCategory(food.category))),
+        ];
         setCategories(uniqueCategories);
       } catch (error) {
         console.error("Error fetching foods:", error);
@@ -57,7 +63,9 @@ export default function RestaurantPage() {
     let filtered = foods;
 
     if (categoryFilter) {
-      filtered = filtered.filter((food) => food.category === categoryFilter);
+      filtered = filtered.filter(
+        (food) => normalizeCategory(food.category) === normalizeCategory(categoryFilter)
+      );
     }
 
     if (minPrice) {
@@ -73,19 +81,26 @@ export default function RestaurantPage() {
 
   async function handleAddFood() {
     try {
+      const normalizedCategory = normalizeCategory(newFood.category);
+      const foodToSend = {
+        ...newFood,
+        price: parseFloat(newFood.price),
+        category: normalizedCategory,
+      };
+
       const res = await fetch(`/api/restaurants/${restaurantId}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...newFood, price: parseFloat(newFood.price) }),
+        body: JSON.stringify(foodToSend),
       });
+
       if (!res.ok) throw new Error("Failed to add food");
 
       const addedFood = await res.json();
       setFoods([...foods, addedFood]);
 
-      
-      if (!categories.includes(addedFood.category)) {
-        setCategories([...categories, addedFood.category]);
+      if (!categories.includes(normalizedCategory)) {
+        setCategories([...categories, normalizedCategory]);
       }
 
       setNewFood({ name: "", description: "", image: "", price: "", category: "" });
@@ -139,7 +154,7 @@ export default function RestaurantPage() {
           )}
         </div>
 
-        
+        {/* Formulario para añadir comida */}
         <div className="p-6 bg-gray-100 border rounded-lg shadow-md mt-6">
           <h2 className="text-lg font-semibold mb-4">Añadir Comida</h2>
           <input
@@ -170,18 +185,13 @@ export default function RestaurantPage() {
             onChange={(e) => setNewFood({ ...newFood, price: e.target.value })}
             className="w-full p-2 mb-2 border rounded"
           />
-          <select
+          <input
+            type="text"
+            placeholder="Categoría"
             value={newFood.category}
             onChange={(e) => setNewFood({ ...newFood, category: e.target.value })}
             className="w-full p-2 mb-2 border rounded"
-          >
-            <option value="">Seleccionar categoría</option>
-            {categories.map((category) => (
-              <option key={category} value={category}>
-                {category}
-              </option>
-            ))}
-          </select>
+          />
           <button
             onClick={handleAddFood}
             className="mt-2 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition"
