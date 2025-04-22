@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
+import { useSession } from "next-auth/react"; // <-- import
 import Header from "@/app/components/Header";
 import FoodCard from "@/app/components/FoodCard";
 import Footer from "@/app/components/Footer";
@@ -20,6 +21,9 @@ function normalizeCategory(cat: string): string {
 }
 
 export default function RestaurantPage() {
+  const { data: session } = useSession(); // <-- get session
+  const isAdmin = session?.user?.role === "admin"; // <-- check if admin
+
   const params = useParams();
   const restaurantId = params?.restaurantId as string;
   const [foods, setFoods] = useState<Food[]>([]);
@@ -46,7 +50,6 @@ export default function RestaurantPage() {
         setFoods(data);
         setFilteredFoods(data);
 
-        // Categorías únicas normalizadas
         const uniqueCategories = [
           ...new Set(data.map((food) => normalizeCategory(food.category))),
         ];
@@ -154,51 +157,53 @@ export default function RestaurantPage() {
           )}
         </div>
 
-        {/* Formulario para añadir comida */}
-        <div className="p-6 bg-gray-100 border rounded-lg shadow-md mt-6">
-          <h2 className="text-lg font-semibold mb-4">Añadir Comida</h2>
-          <input
-            type="text"
-            placeholder="Nombre"
-            value={newFood.name}
-            onChange={(e) => setNewFood({ ...newFood, name: e.target.value })}
-            className="w-full p-2 mb-2 border rounded"
-          />
-          <input
-            type="text"
-            placeholder="Descripción"
-            value={newFood.description}
-            onChange={(e) => setNewFood({ ...newFood, description: e.target.value })}
-            className="w-full p-2 mb-2 border rounded"
-          />
-          <input
-            type="text"
-            placeholder="Imagen URL"
-            value={newFood.image}
-            onChange={(e) => setNewFood({ ...newFood, image: e.target.value })}
-            className="w-full p-2 mb-2 border rounded"
-          />
-          <input
-            type="number"
-            placeholder="Precio"
-            value={newFood.price}
-            onChange={(e) => setNewFood({ ...newFood, price: e.target.value })}
-            className="w-full p-2 mb-2 border rounded"
-          />
-          <input
-            type="text"
-            placeholder="Categoría"
-            value={newFood.category}
-            onChange={(e) => setNewFood({ ...newFood, category: e.target.value })}
-            className="w-full p-2 mb-2 border rounded"
-          />
-          <button
-            onClick={handleAddFood}
-            className="mt-2 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition"
-          >
-            Agregar Comida
-          </button>
-        </div>
+        {/* Formulario para añadir comida SOLO PARA ADMIN */}
+        {isAdmin && (
+          <div className="p-6 bg-gray-100 border rounded-lg shadow-md mt-6">
+            <h2 className="text-lg font-semibold mb-4">Añadir Comida</h2>
+            <input
+              type="text"
+              placeholder="Nombre"
+              value={newFood.name}
+              onChange={(e) => setNewFood({ ...newFood, name: e.target.value })}
+              className="w-full p-2 mb-2 border rounded"
+            />
+            <input
+              type="text"
+              placeholder="Descripción"
+              value={newFood.description}
+              onChange={(e) => setNewFood({ ...newFood, description: e.target.value })}
+              className="w-full p-2 mb-2 border rounded"
+            />
+            <input
+              type="text"
+              placeholder="Imagen URL"
+              value={newFood.image}
+              onChange={(e) => setNewFood({ ...newFood, image: e.target.value })}
+              className="w-full p-2 mb-2 border rounded"
+            />
+            <input
+              type="number"
+              placeholder="Precio"
+              value={newFood.price}
+              onChange={(e) => setNewFood({ ...newFood, price: e.target.value })}
+              className="w-full p-2 mb-2 border rounded"
+            />
+            <input
+              type="text"
+              placeholder="Categoría"
+              value={newFood.category}
+              onChange={(e) => setNewFood({ ...newFood, category: e.target.value })}
+              className="w-full p-2 mb-2 border rounded"
+            />
+            <button
+              onClick={handleAddFood}
+              className="mt-2 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition"
+            >
+              Agregar Comida
+            </button>
+          </div>
+        )}
       </div>
       <Footer />
     </div>

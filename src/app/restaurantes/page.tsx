@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useSession } from "next-auth/react"; // <-- add this
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import RestaurantCard from "../components/RestaurantCard";
@@ -14,6 +15,9 @@ interface Restaurant {
 }
 
 export default function Page() {
+  const { data: session } = useSession(); // <-- get session
+  const isAdmin = session?.user?.role === "admin"; // <-- check role
+
   const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
@@ -50,7 +54,7 @@ export default function Page() {
 
       if (res.ok) {
         const newRestaurant = await res.json();
-        setRestaurants([...restaurants, newRestaurant]); // Actualiza la lista en tiempo real
+        setRestaurants([...restaurants, newRestaurant]);
         setMessage("Restaurante añadido con éxito!");
         setName("");
         setDescription("");
@@ -82,55 +86,55 @@ export default function Page() {
             <p className="text-gray-500">No restaurants available</p>
           )}
 
-<div className="p-6 mt-10 border rounded-lg shadow-md bg-white w-96">
-          <h2 className="text-xl font-bold mb-4">Añadir Restaurante</h2>
-          <form onSubmit={handleAddRestaurant} className="flex flex-col gap-3">
-            <input
-              type="text"
-              placeholder="Nombre"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              className="border p-2 rounded"
-              required
-            />
-            <input
-              type="text"
-              placeholder="Descripción"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              className="border p-2 rounded"
-              required
-            />
-            <input
-              type="text"
-              placeholder="URL de imagen"
-              value={image}
-              onChange={(e) => setImage(e.target.value)}
-              className="border p-2 rounded"
-              required
-            />
-            <input
-              type="text"
-              placeholder="Dirección"
-              value={address}
-              onChange={(e) => setAddress(e.target.value)}
-              className="border p-2 rounded"
-              required
-            />
-            <button
-              type="submit"
-              disabled={loading}
-              className="bg-blue-500 text-white py-2 rounded hover:bg-blue-600 transition"
-            >
-              {loading ? "Añadiendo..." : "Añadir Restaurante"}
-            </button>
-          </form>
-          {message && <p className="mt-2 text-center text-sm text-gray-600">{message}</p>}
+          {/* Only show this form if user is admin */}
+          {isAdmin && (
+            <div className="p-6 mt-10 border rounded-lg shadow-md bg-white w-96">
+              <h2 className="text-xl font-bold mb-4">Añadir Restaurante</h2>
+              <form onSubmit={handleAddRestaurant} className="flex flex-col gap-3">
+                <input
+                  type="text"
+                  placeholder="Nombre"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  className="border p-2 rounded"
+                  required
+                />
+                <input
+                  type="text"
+                  placeholder="Descripción"
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  className="border p-2 rounded"
+                  required
+                />
+                <input
+                  type="text"
+                  placeholder="URL de imagen"
+                  value={image}
+                  onChange={(e) => setImage(e.target.value)}
+                  className="border p-2 rounded"
+                  required
+                />
+                <input
+                  type="text"
+                  placeholder="Dirección"
+                  value={address}
+                  onChange={(e) => setAddress(e.target.value)}
+                  className="border p-2 rounded"
+                  required
+                />
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="bg-blue-500 text-white py-2 rounded hover:bg-blue-600 transition"
+                >
+                  {loading ? "Añadiendo..." : "Añadir Restaurante"}
+                </button>
+              </form>
+              {message && <p className="mt-2 text-center text-sm text-gray-600">{message}</p>}
+            </div>
+          )}
         </div>
-        </div>
-
-        {/* Tarjeta para añadir un nuevo restaurante */}
-        
       </div>
 
       <Footer />
