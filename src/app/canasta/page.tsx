@@ -7,7 +7,7 @@ import { RootCartState } from "../../../redux/store";
 import { decrementQuantity, incrementQuantity, removeFromCart } from "../../../redux/cart.slice";
 import CheckoutButton from "../components/CheckoutButton"; // Import the component
 
-export default function page() {
+export default function Page() {
     const cart = useSelector((state: RootCartState) => state.cart);
     const dispatch = useDispatch();
 
