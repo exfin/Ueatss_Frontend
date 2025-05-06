@@ -1,11 +1,12 @@
-function Footer() {
+export default function Footer() {
     return (
-        <footer className="bg-[hsl(240,45%,9%)] w-full h-[125px] flex items-center mb-0">
-            <p className="text-[rgb(251,232,209)] ml-[34px]">
-                &copy; {new Date().getFullYear()} - EIA todos los derechos reservados
-            </p>
-        </footer>
-    );
-}
-
-export default Footer;
+      <footer className="bg-gray-50 border-t border-gray-100 py-6">
+        <div className="container mx-auto px-4">
+          <p className="text-center text-gray-600">
+            &copy; {new Date().getFullYear()} - EIA todos los derechos reservados
+          </p>
+        </div>
+      </footer>
+    )
+  }
+  

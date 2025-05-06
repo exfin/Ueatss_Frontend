@@ -1,62 +1,58 @@
-"use client";
+"use client"
 
-import Link from "next/link";
-import { useState } from "react";
-import { Menu, X } from "lucide-react";
-import NavButtons from "./buttons/NavButtons";
+import Link from "next/link"
+import { useState } from "react"
+import { Menu, X } from "lucide-react"
+import NavButtons from "./buttons/NavButtons"
 
-const Navlinks = () =>{
+const NavLinks = () => {
   return (
     <>
-    <Link
-      href="/canasta"
-      className="relative text-white hover:text-gray-500 after:absolute after:left-0 after:bottom-0 after:w-full after:h-[2px] after:bg-white after:scale-x-0 after:transition-transform after:duration-300 hover:after:scale-x-100"
-    >
-      Canasta
-    </Link>
-    <Link
-      href="/perfil"
-      className="relative text-white hover:text-gray-500 after:absolute after:left-0 after:bottom-0 after:w-full after:h-[2px] after:bg-white after:scale-x-0 after:transition-transform after:duration-300 hover:after:scale-x-100"
-    >
-      Cuenta
-    </Link>
-  </>
-
-  
-
+      <Link
+        href="/canasta"
+        className="relative inline-flex items-center px-3 py-2 text-sm font-medium text-gray-700 hover:text-green-600 transition-colors duration-200"
+      >
+        Canasta
+      </Link>
+      <Link
+        href="/perfil"
+        className="relative inline-flex items-center px-3 py-2 text-sm font-medium text-gray-700 hover:text-green-600 transition-colors duration-200"
+      >
+        Cuenta
+      </Link>
+    </>
   )
 }
 
 export default function Navbar() {
+  const [isOpen, setIsOpen] = useState(false)
 
-  const [isOpen, setIsOpen] = useState(false);
-
-  const toggleNavbar = () =>{
-    setIsOpen(!isOpen);
+  const toggleNavbar = () => {
+    setIsOpen(!isOpen)
   }
 
   return (
-
     <>
-
-    <div className="flex w-1/4 justify-end p-4">
-      <div className="hidden w-full justify-between md:flex">
-        <NavButtons></NavButtons>
+      {/* Desktop Navigation */}
+      <div className="hidden md:flex items-center space-x-1">
+        <NavButtons />
       </div>
+
+      {/* Mobile Navigation Button */}
       <div className="md:hidden">
-        <button className=" text-white" onClick={toggleNavbar}>
-          {isOpen? <X></X> : <Menu></Menu>}
+        <button className="text-gray-700 hover:text-green-600 focus:outline-none" onClick={toggleNavbar}>
+          {isOpen ? <X size={24} /> : <Menu size={24} />}
         </button>
       </div>
-    </div>
-    {isOpen && (
-      <div className="flex flex-col items-center basis-full ">
-        <NavButtons></NavButtons>
-      </div>
-    )}
-    
-    
+
+      {/* Mobile Navigation Menu */}
+      {isOpen && (
+        <div className="absolute top-full left-0 right-0 bg-white shadow-md p-4 md:hidden border-t border-gray-100">
+          <div className="flex flex-col space-y-3">
+            <NavButtons />
+          </div>
+        </div>
+      )}
     </>
-    
-  );
+  )
 }
