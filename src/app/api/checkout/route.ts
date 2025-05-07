@@ -57,8 +57,14 @@ interface CheckoutRequest {
         return NextResponse.json(
             { error: error instanceof Error ? error.message : 'Unknown error' }, 
             { status: 500 }
+<<<<<<< HEAD
         );
     }
 }
 
 
+=======
+        );
+    }
+}
+>>>>>>> 07b021cacede3d6f933c93b1978ce29eedae60fe
