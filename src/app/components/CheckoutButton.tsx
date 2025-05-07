@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { ShoppingCart, Loader2 } from "lucide-react"
+import { Loader2, CreditCard } from "lucide-react"
 
 type Props = {
   restaurantId: string
@@ -43,16 +43,16 @@ export default function CheckoutButton({ restaurantId, title, price, quantity = 
     <button
       onClick={handleCheckout}
       disabled={loading}
-      className="w-full flex items-center justify-center gap-2 px-6 py-3 bg-green-500 hover:bg-green-600 text-white font-medium rounded-md shadow-sm transition-colors disabled:opacity-70 disabled:cursor-not-allowed"
+      className="w-full flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white font-medium rounded-full shadow-md transition-all duration-300 disabled:opacity-70 disabled:cursor-not-allowed transform hover:-translate-y-1 hover:shadow-lg"
     >
       {loading ? (
         <>
           <Loader2 size={20} className="animate-spin" />
-          <span>Cargando...</span>
+          <span>Procesando...</span>
         </>
       ) : (
         <>
-          <ShoppingCart size={20} />
+          <CreditCard size={20} className="animate-pulse" />
           <span>Reservar y Pagar</span>
         </>
       )}
