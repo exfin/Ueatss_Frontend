@@ -16,6 +16,7 @@ const authOptions: NextAuthOptions = {
     }),
   ],
   adapter: PrismaAdapter(prisma),
+  secret: process.env.AUTH_SECRET,
   callbacks: {
     async session({ session, user }: { session: Session; user: ExtendedUser }) {
       if (session.user) {
