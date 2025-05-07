@@ -1,57 +1,62 @@
 // app/api/checkout/route.ts
 import { NextResponse } from "next/server";
 import mercadopago from "mercadopago";
+import { MercadoPagoConfig, Preference } from 'mercadopago';
+import { NextApiRequest, NextApiResponse } from 'next';
 
-// Define the function to fetch the restaurant's token
+
 async function getRestaurantToken(restaurantId: string): Promise<string> {
-    const tokens = {
-        "123": "YOUR_MERCADOPAGO_ACCESS_TOKEN_FOR_RESTAURANT_123",
-        "456": "YOUR_MERCADOPAGO_ACCESS_TOKEN_FOR_RESTAURANT_456",
-    };
-
-    const token = tokens[restaurantId];
+    const token = process.env[MERCADOPAGO_ACCESS_TOKEN_${restaurantId}];
     if (!token) {
-        throw new Error(`No access token found for restaurantId: ${restaurantId}`);
+      throw new Error(No access token found for restaurantId: ${restaurantId});
     }
-
     return token;
-}
+  }
 
-export async function POST(req: Request) {
+interface CheckoutRequest {
+    restaurantId: string;
+    title: string;
+    price: number;
+    quantity: number;
+    // Add any other expected properties here
+  }
+
+  export async function POST(req: Request) {
     try {
-        const body = await req.json();
+        const body: CheckoutRequest = await req.json(); // Type assertion here
         const { restaurantId, title, price, quantity } = body;
 
-        // Fetch the restaurant's MercadoPago access token
+        // Rest of your code remains the same...
         const restaurantToken = await getRestaurantToken(restaurantId);
-
-        // Configure the MercadoPago SDK
-        mercadopago.configure({
-            access_token: restaurantToken,
+        if (!restaurantToken) {
+            return NextResponse.json({ error: "Restaurant token not found" }, { status: 404 });
+        }
+        const client = new MercadoPagoConfig({
+            accessToken: restaurantToken
         });
 
-        // Create a preference for the payment
-        const preference = {
-            items: [
-                {
-                    title,
-                    unit_price: price,
-                    quantity,
+        const preference = new Preference(client);
+        const result = await preference.create({
+            body: {
+                items: [{
+                    title, unit_price: price, quantity,
+                    id: ""
+                }],
+                back_urls: {
+                    success: "http://localhost:3000/success",
+                    failure: "http://localhost:3000/failure",
+                    pending: "http://localhost:3000/pending",
                 },
-            ],
-            back_urls: {
-                success: "http://localhost:3000/success",
-                failure: "http://localhost:3000/failure",
-                pending: "http://localhost:3000/pending",
-            },
-            auto_return: "approved",
-        };
+                auto_return: "approved",
+            }
+        });
 
-        const response = await mercadopago.preferences.create(preference);
-
-        return NextResponse.json({ url: response.body.init_point });
+        return NextResponse.json({ url: result.init_point });
     } catch (error) {
         console.error("Error creating MercadoPago preference:", error);
-        return NextResponse.json({ error: error.message }, { status: 500 });
-    }
+        return NextResponse.json(
+            { error: error instanceof Error ? error.message : 'Unknown error' }, 
+            { status: 500 }
+        );
+    }
 }
