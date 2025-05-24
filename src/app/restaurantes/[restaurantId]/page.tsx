@@ -6,6 +6,7 @@ import { useSession } from "next-auth/react"; // <-- import
 import Header from "@/app/components/Header";
 import FoodCard from "@/app/components/FoodCard";
 import Footer from "@/app/components/Footer";
+import { FiFilter as Filter } from "react-icons/fi";
 
 interface Food {
   id: string
@@ -20,21 +21,12 @@ function normalizeCategory(cat: string): string {
   return cat.trim().toLowerCase();
 }
 
-function normalizeCategory(cat: string): string {
-  return cat.trim().toLowerCase();
-}
-
 export default function RestaurantPage() {
   const { data: session } = useSession(); // <-- get session
   const isAdmin = session?.user?.role === "admin"; // <-- check if admin
 
   const params = useParams();
   const restaurantId = params?.restaurantId as string;
-  const [foods, setFoods] = useState<Food[]>([]);
-  const [filteredFoods, setFilteredFoods] = useState<Food[]>([]);
-  const [categories, setCategories] = useState<string[]>([]);
-  const params = useParams()
-  const restaurantId = params?.restaurantId as string
 
   const [foods, setFoods] = useState<Food[]>([])
   const [filteredFoods, setFilteredFoods] = useState<Food[]>([])
