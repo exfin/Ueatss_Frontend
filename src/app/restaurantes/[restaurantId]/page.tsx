@@ -1,11 +1,11 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import { useParams } from "next/navigation"
-import Header from "@/app/components/Header"
-import FoodCard from "@/app/components/FoodCard"
-import Footer from "@/app/components/Footer"
-import { Filter, PlusCircle } from "lucide-react"
+import { useEffect, useState } from "react";
+import { useParams } from "next/navigation";
+import { useSession } from "next-auth/react"; // <-- import
+import Header from "@/app/components/Header";
+import FoodCard from "@/app/components/FoodCard";
+import Footer from "@/app/components/Footer";
 
 interface Food {
   id: string
@@ -16,7 +16,23 @@ interface Food {
   category: string
 }
 
+function normalizeCategory(cat: string): string {
+  return cat.trim().toLowerCase();
+}
+
+function normalizeCategory(cat: string): string {
+  return cat.trim().toLowerCase();
+}
+
 export default function RestaurantPage() {
+  const { data: session } = useSession(); // <-- get session
+  const isAdmin = session?.user?.role === "admin"; // <-- check if admin
+
+  const params = useParams();
+  const restaurantId = params?.restaurantId as string;
+  const [foods, setFoods] = useState<Food[]>([]);
+  const [filteredFoods, setFilteredFoods] = useState<Food[]>([]);
+  const [categories, setCategories] = useState<string[]>([]);
   const params = useParams()
   const restaurantId = params?.restaurantId as string
 
@@ -44,9 +60,10 @@ export default function RestaurantPage() {
         setFoods(data)
         setFilteredFoods(data)
 
-        // Extraer categorías únicas
-        const uniqueCategories = [...new Set(data.map((food) => food.category))]
-        setCategories(uniqueCategories)
+        const uniqueCategories = [
+          ...new Set(data.map((food) => normalizeCategory(food.category))),
+        ];
+        setCategories(uniqueCategories);
       } catch (error) {
         console.error("Error fetching foods:", error)
       }
@@ -59,7 +76,9 @@ export default function RestaurantPage() {
     let filtered = foods
 
     if (categoryFilter) {
-      filtered = filtered.filter((food) => food.category === categoryFilter)
+      filtered = filtered.filter(
+        (food) => normalizeCategory(food.category) === normalizeCategory(categoryFilter)
+      );
     }
 
     if (minPrice) {
@@ -75,18 +94,26 @@ export default function RestaurantPage() {
 
   async function handleAddFood() {
     try {
+      const normalizedCategory = normalizeCategory(newFood.category);
+      const foodToSend = {
+        ...newFood,
+        price: parseFloat(newFood.price),
+        category: normalizedCategory,
+      };
+
       const res = await fetch(`/api/restaurants/${restaurantId}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...newFood, price: Number.parseFloat(newFood.price) }),
-      })
-      if (!res.ok) throw new Error("Failed to add food")
+        body: JSON.stringify(foodToSend),
+      });
 
-      const addedFood = await res.json()
-      setFoods([...foods, addedFood])
+      if (!res.ok) throw new Error("Failed to add food");
 
-      if (!categories.includes(addedFood.category)) {
-        setCategories([...categories, addedFood.category])
+      const addedFood = await res.json();
+      setFoods([...foods, addedFood]);
+
+      if (!categories.includes(normalizedCategory)) {
+        setCategories([...categories, normalizedCategory]);
       }
 
       setNewFood({ name: "", description: "", image: "", price: "", category: "" })
@@ -156,67 +183,53 @@ export default function RestaurantPage() {
           )}
         </div>
 
-        {/* Formulario para añadir comida */}
-        <div className="bg-white rounded-lg shadow-sm p-6 mb-8">
-          <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
-            <PlusCircle size={20} className="text-green-500" />
-            Añadir Comida
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {/* Formulario para añadir comida SOLO PARA ADMIN */}
+        {isAdmin && (
+          <div className="p-6 bg-gray-100 border rounded-lg shadow-md mt-6">
+            <h2 className="text-lg font-semibold mb-4">Añadir Comida</h2>
             <input
               type="text"
               placeholder="Nombre"
               value={newFood.name}
               onChange={(e) => setNewFood({ ...newFood, name: e.target.value })}
-              className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              className="w-full p-2 mb-2 border rounded"
             />
-
             <input
               type="text"
               placeholder="Descripción"
               value={newFood.description}
               onChange={(e) => setNewFood({ ...newFood, description: e.target.value })}
-              className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              className="w-full p-2 mb-2 border rounded"
             />
-
             <input
               type="text"
               placeholder="Imagen URL"
               value={newFood.image}
               onChange={(e) => setNewFood({ ...newFood, image: e.target.value })}
-              className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              className="w-full p-2 mb-2 border rounded"
             />
-
             <input
               type="number"
               placeholder="Precio"
               value={newFood.price}
               onChange={(e) => setNewFood({ ...newFood, price: e.target.value })}
-              className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              className="w-full p-2 mb-2 border rounded"
             />
-
-            <select
+            <input
+              type="text"
+              placeholder="Categoría"
               value={newFood.category}
               onChange={(e) => setNewFood({ ...newFood, category: e.target.value })}
-              className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
-            >
-              <option value="">Seleccionar categoría</option>
-              {categories.map((category) => (
-                <option key={category} value={category}>
-                  {category}
-                </option>
-              ))}
-            </select>
-
+              className="w-full p-2 mb-2 border rounded"
+            />
             <button
               onClick={handleAddFood}
-              className="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 transition-colors flex items-center justify-center gap-2"
+              className="mt-2 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition"
             >
-              <PlusCircle size={18} />
               Agregar Comida
             </button>
           </div>
-        </div>
+        )}
       </div>
       <Footer />
     </div>

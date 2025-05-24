@@ -28,6 +28,11 @@ export default function AuthButton() {
 
   return (
     <>
+      Not signed in <br />
+      <button onClick={() => signIn("auth0", undefined, { prompt: "select_account" })}>
+        Iniciar Sesión
+      </button>
+
       <div className="flex flex-col items-center gap-4 p-6">
         <p className="text-gray-600 mb-2">Not signed in</p>
         <button

@@ -16,6 +16,9 @@ interface Restaurant {
 }
 
 export default function Page() {
+  const { data: session } = useSession(); // <-- get session
+  const isAdmin = session?.user?.role === "admin"; // <-- check role
+
   const [restaurants, setRestaurants] = useState<Restaurant[]>([])
   const [name, setName] = useState("")
   const [description, setDescription] = useState("")
