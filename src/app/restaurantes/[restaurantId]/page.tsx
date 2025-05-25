@@ -22,7 +22,7 @@ function normalizeCategory(cat: string): string {
 }
 
 export default function RestaurantPage() {
-  const { data: session } = useSession(); // <-- get session
+  const { data: session } = useSession(); // <-- get session //esto esta dando problemas 
   const isAdmin = session?.user?.role === "admin"; // <-- check if admin
 
   const params = useParams();

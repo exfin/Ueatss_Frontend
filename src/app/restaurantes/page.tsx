@@ -6,6 +6,7 @@ import Header from "../components/Header"
 import Footer from "../components/Footer"
 import RestaurantCard from "../components/RestaurantCard"
 import { PlusCircle, Store, Search } from "lucide-react"
+import { useSession } from "next-auth/react" // <-- import
 
 interface Restaurant {
   id: string
@@ -16,7 +17,7 @@ interface Restaurant {
 }
 
 export default function Page() {
-  const { data: session } = useSession(); // <-- get session
+  const { data: session } = useSession(); // <-- get session Esto es dando problemas
   const isAdmin = session?.user?.role === "admin"; // <-- check role
 
   const [restaurants, setRestaurants] = useState<Restaurant[]>([])
