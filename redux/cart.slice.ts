@@ -2,6 +2,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 // Define the type for a cart item
 interface CartItem {
+  restaurantId: string;
   id: string;
   name: string;
   image: string;
