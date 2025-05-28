@@ -22,8 +22,9 @@ export default function FoodCard({ product }: FoodCardProps) {
   const [isHovered, setIsHovered] = useState(false)
   const [isAdded, setIsAdded] = useState(false)
 
+  // TODO: Replace 'yourRestaurantId' with the actual restaurant ID as needed
   const handleAddToCart = () => {
-    dispatch(addToCart(product))
+    dispatch(addToCart({ ...product, restaurantId: "yourRestaurantId" }))
     setIsAdded(true)
 
     // Reset animation after 2 seconds
